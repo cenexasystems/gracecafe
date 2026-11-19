@@ -357,7 +357,25 @@ export function AdminProvider({ initial, role, children }: { initial: AdminState
       const ready = Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise<void>((res) => (i.addEventListener("load", () => res(), { once: true }), i.addEventListener("error", () => res(), { once: true }))))));
       const cap = new Promise<void>((res) => setTimeout(res, 4000));
       Promise.race([ready, cap]).then(() => {
-        if (!dead) window.print();
+        if (dead) return;
+        /* A thermal roll has no fixed page length: size the page to the receipt itself, so the printer feeds
+           just the bill instead of a whole A4 length of blank paper. */
+        let fit: HTMLStyleElement | null = null;
+        const area = document.querySelector<HTMLElement>(".adm-print");
+        const rc = area?.querySelector<HTMLElement>(".rcpt");
+        const m = /size:\s*(\d+)mm\s+297mm;margin:([^}]*)\}/.exec(area?.querySelector("style")?.textContent ?? "");
+        if (area && rc && m) {
+          const was = area.getAttribute("style");
+          area.style.cssText = "display:block;position:absolute;visibility:hidden;left:-9999px;top:0";
+          const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 8;
+          if (was === null) area.removeAttribute("style");
+          else area.setAttribute("style", was);
+          fit = document.createElement("style");
+          fit.textContent = `@page{size:${m[1]}mm ${mm}mm;margin:${m[2]}}`;
+          document.body.appendChild(fit);
+          window.addEventListener("afterprint", () => fit?.remove(), { once: true });
+        }
+        window.print();
       });
     };
     raf = requestAnimationFrame(() => requestAnimationFrame(go));
