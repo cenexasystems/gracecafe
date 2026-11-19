@@ -367,7 +367,7 @@ export function AdminProvider({ initial, role, children }: { initial: AdminState
         if (area && rc && m) {
           const was = area.getAttribute("style");
           area.style.cssText = "display:block;position:absolute;visibility:hidden;left:-9999px;top:0";
-          const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 2; // + the 1mm of print padding
+          const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 1;
           if (was === null) area.removeAttribute("style");
           else area.setAttribute("style", was);
           /* Kept in the page (not removed after printing): Chrome re-lays-out the preview every time a print
