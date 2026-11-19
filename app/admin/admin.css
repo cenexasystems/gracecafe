@@ -350,8 +350,11 @@ html:has(.adm) {
   #adm-layer {
     display: none !important;
   }
+  /* fill whatever width the printer can really print, so nothing at the right edge is clipped */
   .rcpt {
-    padding: 2mm 0;
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 2mm 1.5mm;
     break-inside: avoid;
     page-break-after: avoid;
   }

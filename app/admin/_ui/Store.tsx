@@ -360,7 +360,7 @@ export function AdminProvider({ initial, role, children }: { initial: AdminState
         if (dead) return;
         /* A thermal roll has no fixed page length: size the page to the receipt itself, so the printer feeds
            just the bill instead of a whole A4 length of blank paper. */
-        let fit: HTMLStyleElement | null = null;
+        document.getElementById("adm-fit-page")?.remove(); // a rule left over from an earlier print
         const area = document.querySelector<HTMLElement>(".adm-print");
         const rc = area?.querySelector<HTMLElement>(".rcpt");
         const m = /size:\s*(\d+)mm\s+297mm;margin:([^}]*)\}/.exec(area?.querySelector("style")?.textContent ?? "");
@@ -370,10 +370,13 @@ export function AdminProvider({ initial, role, children }: { initial: AdminState
           const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 5; // + the 4mm of print padding
           if (was === null) area.removeAttribute("style");
           else area.setAttribute("style", was);
-          fit = document.createElement("style");
+          /* Kept in the page (not removed after printing): Chrome re-lays-out the preview every time a print
+             setting changes, and each of those passes must still see the fitted page height. The next print
+             replaces it. */
+          const fit = document.createElement("style");
+          fit.id = "adm-fit-page";
           fit.textContent = `@page{size:${m[1]}mm ${mm}mm;margin:${m[2]}}`;
           document.body.appendChild(fit);
-          window.addEventListener("afterprint", () => fit?.remove(), { once: true });
         }
         window.print();
       });
