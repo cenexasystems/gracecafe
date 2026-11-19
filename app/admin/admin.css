@@ -354,7 +354,7 @@ html:has(.adm) {
   .rcpt {
     width: 100% !important;
     box-sizing: border-box;
-    padding: 2mm 1.5mm;
+    padding: 0.5mm 1.5mm;
     break-inside: avoid;
     page-break-after: avoid;
   }
