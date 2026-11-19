@@ -431,6 +431,7 @@ export async function adminState(): Promise<AdminState> {
       upiPhone: st[0]?.upiPhone ?? "",
       upiQrMinutes: st[0]?.upiQrMinutes ?? 5,
       tableCount: st[0]?.tableCount ?? 0,
+      printFormat: st[0]?.printFormat ?? "thermal3",
     },
     products: prods.map((p) => ({ ...p, image: imgLink(p.id, p.updatedAt, p.image) })),
     sessions: sess,
@@ -1195,6 +1196,10 @@ export async function runOp(tx: Tx, op: string, a: Args, role: string): Promise<
           patch.upiPhone = v;
         }
         if (a.upiQrMinutes !== undefined) patch.upiQrMinutes = int(a.upiQrMinutes, 1, 30, 5);
+        if (a.printFormat !== undefined) {
+          if (!["thermal3", "thermal2", "A3", "A4", "A5"].includes(String(a.printFormat))) throw new ApiError("Choose a valid paper size.");
+          patch.printFormat = String(a.printFormat);
+        }
         if (a.tableCount !== undefined) patch.tableCount = int(a.tableCount, 0, 200, 0);
         if (a.ownerName !== undefined) patch.ownerName = str(a.ownerName, 80);
         if (a.location !== undefined) patch.location = str(a.location, 120);

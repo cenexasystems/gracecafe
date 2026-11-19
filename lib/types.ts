@@ -428,7 +428,7 @@ export type BirthdayConfig = { offers: BirthdayOffer[]; selected: string; templa
 export type AdminState = Omit<DB, "settings" | "users"> & {
   birthdays: BirthdayEntry[];
   birthdayConfig: BirthdayConfig;
-  settings: ShopDetails & { shopName: string; publicUrl: string; walkInsOnly: boolean; kotEnabled: boolean; orderingEnabled: boolean; upiId: string; upiName: string; upiPhone: string; upiQrMinutes: number; tableCount: number };
+  settings: ShopDetails & { shopName: string; publicUrl: string; walkInsOnly: boolean; kotEnabled: boolean; orderingEnabled: boolean; upiId: string; upiName: string; upiPhone: string; upiQrMinutes: number; tableCount: number; printFormat: string };
   users: PublicUser[];
   /** how loyalty points are earned, so each item can show what it earns */
   loyaltyEarn: Pick<LoyaltyConfig, "enabled" | "earn" | "display">;

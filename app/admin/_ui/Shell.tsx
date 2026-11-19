@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAdmin } from "./Store";
+import { PRINT_FORMAT_OPTIONS } from "./receipt";
 import { Btn, Field, Icon, Modal, Switch, cx, inputCls, type IconName } from "./kit";
 
 type Nav = { href: string; label: string; icon: IconName; roles: ("admin" | "staff")[]; requiresKot?: boolean; hideWhen?: (s: { walkInsOnly: boolean; kotEnabled: boolean; orderingEnabled: boolean }) => boolean };
@@ -86,7 +87,7 @@ function Settings({ onClose }: { onClose: () => void }) {
   const [form, setForm] = useState({
     shopName: d.shopName, ownerName: d.ownerName, location: d.location, address: d.address, address2: "",
     whatsapp1: d.whatsapp1, whatsapp2: "", customerCare: d.customerCare, email: d.email, mapsUrl: d.mapsUrl, logoUrl: d.logoUrl, publicUrl: d.publicUrl,
-    upiId: d.upiId, upiName: d.upiName, upiPhone: d.upiPhone, upiQrMinutes: String(d.upiQrMinutes), tableCount: String(d.tableCount),
+    upiId: d.upiId, upiName: d.upiName, upiPhone: d.upiPhone, upiQrMinutes: String(d.upiQrMinutes), tableCount: String(d.tableCount), printFormat: d.printFormat,
   });
   const [saving, setSaving] = useState(false);
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
@@ -177,6 +178,10 @@ function Settings({ onClose }: { onClose: () => void }) {
             <Field label="GPay / PhonePe number (optional)" hint="10 digits, shown beside the UPI ID"><input className={inputCls} inputMode="numeric" value={form.upiPhone} maxLength={14} onChange={set("upiPhone")} placeholder="98765 43210" /></Field>
             <Field label="Change the QR every (minutes)" hint="A fresh QR replaces the old one"><input className={inputCls} type="number" min={1} max={30} inputMode="numeric" value={form.upiQrMinutes} onChange={set("upiQrMinutes")} /></Field>
           </div>
+        </Sec>
+
+        <Sec title="Printing" desc="The paper the Print button uses straight away, without asking each time.">
+          <Field label="Default paper" hint="Thermal bill printers: pick the roll width. Sheet printers: pick the paper size."><select className={inputCls} value={form.printFormat} onChange={(e) => setForm({ ...form, printFormat: e.target.value })}>{PRINT_FORMAT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}</select></Field>
         </Sec>
 
         <Sec title="Tables" desc="Each table gets its own QR code, so every order shows which table it came from. Print the cards from Open tabs → Table QR cards.">

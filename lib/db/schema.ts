@@ -48,6 +48,8 @@ export const settings = pgTable("settings", {
   upiQrMinutes: integer("upi_qr_minutes").notNull().default(5),
   /** how many tables the shop has (tables are numbered 1..N for the table QR cards; 0 = none set up) */
   tableCount: integer("table_count").notNull().default(0),
+  /** what Print uses straight away: "thermal3" (3 inch roll), "thermal2", "A3", "A4" or "A5" */
+  printFormat: text("print_format").notNull().default("thermal3"),
 });
 
 /** Single row (id = 1): the change counter the admin panel polls, and the order-number sequence. */

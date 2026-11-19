@@ -5,8 +5,8 @@ import { UPI_CHANNELS, type Bill, type UpiChannel, type Coupon, type DiscountTyp
 import { checkCoupon, computeBill, couponStatus, mergeItems, round2, rupee, shopToday } from "@/lib/money";
 import { useAdmin, whoIs, type FloorTab } from "./Store";
 import Catalog from "./Catalog";
-import PrintModal, { PrintFormats } from "./PrintModal";
-import { Receipt, billText, waLink, type PrintFormat } from "./receipt";
+import PrintModal from "./PrintModal";
+import { Receipt, billText, parseFormat, waLink, type PrintFormat } from "./receipt";
 import { Badge, Btn, Icon, Modal, WaIcon, cx, fmtTime, ago } from "./kit";
 import { UpiQrCard } from "./UpiQrCard";
 import { pointsPerUnit } from "@/lib/loyalty/engine";
@@ -80,7 +80,6 @@ export default function BillingPage({ sessionId }: { sessionId?: string }) {
   const [splitCard, setSplitCard] = useState(d?.splitCard ?? "");
   const [splitUpi, setSplitUpi] = useState(d?.splitUpi ?? "");
   const [saveOpen, setSaveOpen] = useState(false);
-  const [printing, setPrinting] = useState(false);
   const [printFor, setPrintFor] = useState<Bill | null>(null);
   const [picker, setPicker] = useState<number | null>(null);
   const [picking, setPicking] = useState(false); // "Pick from catalog" (multi-add) modal
@@ -282,7 +281,6 @@ export default function BillingPage({ sessionId }: { sessionId?: string }) {
     if (w) w.location.href = waLink(b.customerPhone, billText(b, shop, s.settings.publicUrl));
     if (via === "print") print(<Receipt b={b} shop={shop} details={s.settings} fmt={fmt} showLoyalty={s.loyaltyEarn.display.receiptSummary} />);
     setSaveOpen(false);
-    setPrinting(false);
     setDone(b);
     reset();
   };
@@ -778,7 +776,7 @@ export default function BillingPage({ sessionId }: { sessionId?: string }) {
             {problems.length > 0 && (items.length > 0 || mode === "tab") && <p className="rounded-xl bg-slate-50 px-3 py-2 text-[12.5px] text-slate-600">{problems[0]}</p>}
 
             <div className="space-y-2">
-              <Btn size="lg" kind="red" disabled={!ready} onClick={() => (setPrinting(false), setSaveOpen(true))} className="w-full uppercase">
+              <Btn size="lg" kind="red" disabled={!ready} onClick={() => setSaveOpen(true)} className="w-full uppercase">
                 Save order
               </Btn>
               {mode === "tab" && f && <p className="pt-1 text-center text-[11.5px] text-slate-400">Completing closes {whoIs(f.session)}&apos;s tab — their next order starts a fresh one.</p>}
@@ -848,15 +846,8 @@ export default function BillingPage({ sessionId }: { sessionId?: string }) {
         }}
       />
 
-      <Modal open={saveOpen} onClose={() => setSaveOpen(false)} title={printing ? "Print — choose printer & paper" : "Save order"}>
-        {printing ? (
-          <div className="space-y-4">
-            <PrintFormats onPick={(fmt) => complete("print", fmt)} />
-            <Btn kind="plain" size="sm" onClick={() => setPrinting(false)}>
-              ← Back
-            </Btn>
-          </div>
-        ) : (
+      <Modal open={saveOpen} onClose={() => setSaveOpen(false)} title="Save order">
+        {(
           <div className="space-y-2">
             <p className="mb-1 text-[13px] text-slate-500">{rupee(calc.total)} · how do you want to finish this bill?</p>
             <button
@@ -868,7 +859,7 @@ export default function BillingPage({ sessionId }: { sessionId?: string }) {
               <WaIcon size={20} /> Send to WhatsApp
               {!okPhone(phone) && <span className="ml-auto text-[11px] font-semibold opacity-90">needs a 10-digit mobile</span>}
             </button>
-            <Btn size="lg" kind="dark" icon="print" disabled={busy} onClick={() => setPrinting(true)} className="w-full justify-start">
+            <Btn size="lg" kind="dark" icon="print" disabled={busy} onClick={() => complete("print", parseFormat(s.settings.printFormat))} className="w-full justify-start">
               Print
             </Btn>
             <Btn size="lg" disabled={busy} onClick={() => complete("none")} className="w-full justify-start">

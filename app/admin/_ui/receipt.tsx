@@ -48,6 +48,20 @@ export const THERMAL_ROLLS = [2, 3] as const;
 export const SHEET_SIZES = ["A3", "A4", "A5"] as const;
 export const DEFAULT_FORMAT: PrintFormat = { kind: "thermal", roll: 3 };
 
+/** The choices for the shop's default paper (Settings), and how a saved key becomes a format. */
+export const PRINT_FORMAT_OPTIONS = [
+  { key: "thermal3", label: "3 inch thermal roll (80mm)" },
+  { key: "thermal2", label: "2 inch thermal roll (58mm)" },
+  { key: "A5", label: "A5 sheet" },
+  { key: "A4", label: "A4 sheet" },
+  { key: "A3", label: "A3 sheet" },
+] as const;
+export function parseFormat(key: string | undefined): PrintFormat {
+  if (key === "thermal2") return { kind: "thermal", roll: 2 };
+  if (key === "A3" || key === "A4" || key === "A5") return { kind: "sheet", size: key };
+  return DEFAULT_FORMAT;
+}
+
 /* [paper width, printable width] in mm — the printable strip is narrower than the
    roll so nothing is clipped by the printer's own margins. */
 const ROLL_MM = { 2: [58, 48], 3: [80, 72] } as const;
