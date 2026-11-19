@@ -413,6 +413,8 @@ html:has(.adm) {
   width: 72mm;
   margin: 0 auto;
   font: 400 10pt/1.35 var(--font-rcpt), "Courier New", ui-monospace, Consolas, monospace;
+  /* a hair of extra ink: heavier than regular, well short of bold */
+  -webkit-text-stroke: 0.25px #000;
   color: #000;
 }
 .rcpt h1 {
