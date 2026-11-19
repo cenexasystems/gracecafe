@@ -54,7 +54,7 @@ const ROLL_MM = { 2: [58, 48], 3: [80, 72] } as const;
 
 const pageCss = (f: PrintFormat) =>
   f.kind === "thermal"
-    ? `@page{size:${ROLL_MM[f.roll][0]}mm 297mm;margin:2mm 0}`
+    ? `@page{size:${ROLL_MM[f.roll][0]}mm 297mm;margin:0}`
     : `@page{size:${f.size};margin:0}.inv{box-sizing:border-box;padding:${f.size === "A3" ? 16 : f.size === "A4" ? 12 : 8}mm}`;
 
 /** The shop's printed header lines, built from Settings. */

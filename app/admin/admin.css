@@ -337,6 +337,24 @@ html:has(.adm) {
     display: block;
     color: #000;
   }
+  /* nothing may keep the page taller than the bill: no full-screen wrappers, no stray margins */
+  html,
+  body,
+  .adm {
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  #adm-layer {
+    display: none !important;
+  }
+  .rcpt {
+    padding: 2mm 0;
+    break-inside: avoid;
+    page-break-after: avoid;
+  }
 }
 
 /* QR cards: two per row on A4 */

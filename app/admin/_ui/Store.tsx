@@ -367,7 +367,7 @@ export function AdminProvider({ initial, role, children }: { initial: AdminState
         if (area && rc && m) {
           const was = area.getAttribute("style");
           area.style.cssText = "display:block;position:absolute;visibility:hidden;left:-9999px;top:0";
-          const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 8;
+          const mm = Math.ceil((rc.getBoundingClientRect().height * 25.4) / 96) + 5; // + the 4mm of print padding
           if (was === null) area.removeAttribute("style");
           else area.setAttribute("style", was);
           fit = document.createElement("style");
